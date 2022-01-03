@@ -12,7 +12,9 @@
             </div>
         </div>
         <div class="max-w-[900px] mx-auto mt-4">
-            <div class="flex flex-col">
+            <div v-if="loading">Cargando datos...</div>
+            <div v-else-if="error">Error: {{ error.message }}</div>
+            <div v-else-if="products" class="flex flex-col">
                 <div class="overflow-x-auto">
                     <div class="py-2 align-middle inline-block min-w-full">
                         <div
@@ -36,53 +38,23 @@
                                     </CTableHeadRow>
                                 </CTableHead>
                                 <CTableBody>
-                                    <CTableBodyRow>
+                                    <CTableBodyRow
+                                        v-for="product in products"
+                                        :key="product.id"
+                                    >
                                         <CTableBodyData>
                                             <div class="text-sm text-gray-900">
-                                                Monitor LG 27 Pulgadas
+                                                {{ product.name }}
                                             </div>
                                         </CTableBodyData>
                                         <CTableBodyData>
                                             <div class="text-sm text-gray-900">
-                                                45 Unidades
+                                                {{ product.stock }} Unidades
                                             </div>
                                         </CTableBodyData>
                                         <CTableBodyData>
                                             <div class="text-sm text-gray-900">
-                                                $240
-                                            </div>
-                                        </CTableBodyData>
-                                        <CTableBodyData>
-                                            <div
-                                                class="flex space-x-1 text-sm font-medium"
-                                            >
-                                                <button
-                                                    class="text-white rounded px-2 py-1 bg-sky-600 hover:bg-sky-700"
-                                                >
-                                                    Editar
-                                                </button>
-                                                <button
-                                                    class="text-white rounded px-2 py-1 bg-red-600 hover:bg-red-700"
-                                                >
-                                                    Eliminar
-                                                </button>
-                                            </div>
-                                        </CTableBodyData>
-                                    </CTableBodyRow>
-                                    <CTableBodyRow>
-                                        <CTableBodyData>
-                                            <div class="text-sm text-gray-900">
-                                                Laptop HP Core i7 16BG RAM
-                                            </div>
-                                        </CTableBodyData>
-                                        <CTableBodyData>
-                                            <div class="text-sm text-gray-900">
-                                                25 Unidades
-                                            </div>
-                                        </CTableBodyData>
-                                        <CTableBodyData>
-                                            <div class="text-sm text-gray-900">
-                                                $1250
+                                                $ {{ product.price }}
                                             </div>
                                         </CTableBodyData>
                                         <CTableBodyData>
@@ -126,6 +98,9 @@ import CTableBodyRow from "../components/CTable/CTableBodyRow.vue";
 import CTableBodyData from "../components/CTable/CTableBodyData.vue";
 import CModelNuevoProducto from "@/components/CModal/CModelNuevoProducto.vue";
 import { ref } from "vue";
+import { useQuery, useResult } from "@vue/apollo-composable";
+
+import getProducts from "@/graphql/querys/getProducts";
 
 const showModalNuevoProducto = ref(false);
 
@@ -136,6 +111,11 @@ const openModalNuevoProducto = () => {
 const closeModal = () => {
     showModalNuevoProducto.value = false;
 };
+
+const { result, error, loading } = useQuery(getProducts, null, {
+    fetchPolicy: "cache-and-network",
+});
+const products = useResult(result, null, (data) => data.getProducts.products);
 </script>
 
 <style lang="postcss"></style>
