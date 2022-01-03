@@ -1,12 +1,18 @@
 <template>
-    <h1 class="text-3xl font-bold underline">Hola mundo</h1>
-    <h3>{{ counter }}</h3>
+    <div class="relative w-full">
+        <SidebarMenu />
+    </div>
+
+    <main
+        class="absolute left-[300px] min-h-screen bg-slate-200 w-[calc(100%_-_300px)]"
+    >
+        <NavbarMain />
+
+        <router-view> </router-view>
+    </main>
 </template>
 
 <script setup>
-import { ref } from "vue";
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-
-const counter = ref(5);
+import SidebarMenu from "./components/SidebarMenu.vue";
+import NavbarMain from "./components/NavbarMain.vue";
 </script>
