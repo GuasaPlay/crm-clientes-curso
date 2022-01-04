@@ -3,7 +3,7 @@
         <div class="p-3 pb-6 sm:w-[450px]">
             <div class="h-10 w-full flex items-center relative">
                 <div class="flex-1 font-medium text-lg text-slate-700">
-                    Nuevo cliente
+                    Editar producto
                 </div>
                 <button
                     class="w-10 h-10 flex justify-center items-center rounded-full transition-colors hover:bg-gray-100"
@@ -30,7 +30,7 @@
                             <input
                                 v-model="clientEmail"
                                 class="rounded-md border-2 border-gray-300 shadow transition-colors focus:shadow-sky-600/50 focus:border-sky-600 focus:outline-none px-3 py-1"
-                                type="email"
+                                type="text"
                             />
                         </div>
                         <div class="flex flex-col">
@@ -53,9 +53,9 @@
                     <div class="mt-6">
                         <button
                             class="w-full block px-3 py-2 text-white rounded font-medium shadow-md shadow-sky-600/40 transition-colors bg-sky-600 hover:bg-sky-700 hover:shadow-sky-700/40"
-                            @click="saveClient"
+                            @click="editClient"
                         >
-                            Registrar cliente
+                            Editar producto
                         </button>
                     </div>
                 </div>
@@ -70,12 +70,15 @@ import { useMutation } from "@vue/apollo-composable";
 import { XIcon } from "@heroicons/vue/outline";
 import CModalScaffold from "./CModalScaffold.vue";
 
-import { ref } from "vue";
-import createClient from "@/graphql/mutations/createClient";
-import getClients from "@/graphql/querys/getClients";
+import { ref, watch } from "vue";
+import updateClient from "@/graphql/mutations/updateClient";
 
-defineProps({
+const props = defineProps({
     showModal: Boolean,
+    client: {
+        type: Object,
+        required: true,
+    },
 });
 
 const emit = defineEmits(["closeModal"]);
@@ -86,9 +89,20 @@ const clientCompany = ref("");
 const clientEmail = ref("");
 const clientPhone = ref("");
 
-const { mutate, onDone } = useMutation(createClient);
+watch(
+    () => props.client,
+    () => {
+        const { name, email, company, phone } = props.client;
+        clientName.value = name;
+        clientEmail.value = email;
+        clientCompany.value = company;
+        clientPhone.value = phone;
+    }
+);
 
-const saveClient = () => {
+const { mutate, onDone } = useMutation(updateClient);
+
+const editClient = () => {
     const client = {
         name: clientName.value,
         email: clientEmail.value,
@@ -96,23 +110,7 @@ const saveClient = () => {
         phone: clientPhone.value,
     };
 
-    mutate(
-        { client },
-        {
-            update: (cache, { data: { createClient } }) => {
-                const { client } = createClient;
-
-                const data = cache.readQuery({ query: getClients });
-
-                const clients = [client, ...data.getClients.clients];
-
-                cache.writeQuery({
-                    query: getClients,
-                    data: { getClients: { ...data.getClients, clients } },
-                });
-            },
-        }
-    );
+    mutate({ clientId: props.client.id, client });
 };
 
 onDone(() => {
