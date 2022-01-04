@@ -37,6 +37,7 @@
                                         </CTableHeadCell>
                                     </CTableHeadRow>
                                 </CTableHead>
+
                                 <CTableBody>
                                     <CTableBodyRow
                                         v-for="product in products"
@@ -86,6 +87,12 @@
                                     </CTableBodyRow>
                                 </CTableBody>
                             </CTable>
+                            <div
+                                v-if="products.length === 0"
+                                class="text-center px-3 py-2 text-slate-700 font-normal bg-white"
+                            >
+                                No existen productos disponibles
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -117,36 +124,29 @@ import CTableBody from "../components/CTable/CTableBody.vue";
 import CTableBodyRow from "../components/CTable/CTableBodyRow.vue";
 import CTableBodyData from "../components/CTable/CTableBodyData.vue";
 import CModelNuevoProducto from "@/components/CModal/CModelNuevoProducto.vue";
-import { ref } from "vue";
+
 import { useQuery, useResult } from "@vue/apollo-composable";
 
 import getProducts from "@/graphql/querys/getProducts";
 import CModalEliminarProducto from "@/components/CModal/CModalEliminarProducto.vue";
 import CModelEditarProducto from "@/components/CModal/CModelEditarProducto.vue";
+import useModalNuevoProducto from "@/composables/useModalProducto";
 
-const showModalNuevoProducto = ref(false);
-const openModalNuevoProducto = () => (showModalNuevoProducto.value = true);
-const closeModalNuevoProducto = () => (showModalNuevoProducto.value = false);
+const {
+    productSelected,
 
-const showModalEditarProducto = ref(false);
-const openModalEditarProducto = (product) => {
-    showModalEditarProducto.value = true;
-    productSelected.value = product;
-};
-const closeModalEditarProducto = () => {
-    showModalEditarProducto.value = false;
-    productSelected.value = {};
-};
+    showModalNuevoProducto,
+    openModalNuevoProducto,
+    closeModalNuevoProducto,
 
-const showModalEliminarProducto = ref(false);
-const openModalEliminarProducto = (product) => {
-    showModalEliminarProducto.value = true;
-    productSelected.value = product;
-};
-const closeModalEliminarProducto = () =>
-    (showModalEliminarProducto.value = false);
+    showModalEditarProducto,
+    openModalEditarProducto,
+    closeModalEditarProducto,
 
-const productSelected = ref({});
+    showModalEliminarProducto,
+    openModalEliminarProducto,
+    closeModalEliminarProducto,
+} = useModalNuevoProducto();
 
 const { result, error, loading } = useQuery(getProducts, null, {
     fetchPolicy: "cache-and-network",
