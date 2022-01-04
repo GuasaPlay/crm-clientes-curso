@@ -99,11 +99,11 @@
             </div>
         </div>
     </div>
-    <CModelNuevoProducto
+    <CModalNuevoProducto
         :show-modal="showModalNuevoProducto"
         @close-modal="closeModalNuevoProducto"
     />
-    <CModelEditarProducto
+    <CModalEditarProducto
         :product="productSelected"
         :show-modal="showModalEditarProducto"
         @close-modal="closeModalEditarProducto"
@@ -123,14 +123,14 @@ import CTableHeadCell from "../components/CTable/CTableHeadCell.vue";
 import CTableBody from "../components/CTable/CTableBody.vue";
 import CTableBodyRow from "../components/CTable/CTableBodyRow.vue";
 import CTableBodyData from "../components/CTable/CTableBodyData.vue";
-import CModelNuevoProducto from "@/components/CModal/CModelNuevoProducto.vue";
+
+import CModalEliminarProducto from "@/components/CModal/CModalEliminarProducto.vue";
+import CModalEditarProducto from "@/components/CModal/CModalEditarProducto.vue";
+import CModalNuevoProducto from "@/components/CModal/CModalNuevoProducto.vue";
 
 import { useQuery, useResult } from "@vue/apollo-composable";
-
-import getProducts from "@/graphql/querys/getProducts";
-import CModalEliminarProducto from "@/components/CModal/CModalEliminarProducto.vue";
-import CModelEditarProducto from "@/components/CModal/CModelEditarProducto.vue";
 import useModalNuevoProducto from "@/composables/useModalProducto";
+import getProducts from "@/graphql/querys/getProducts";
 
 const {
     productSelected,
