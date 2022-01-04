@@ -3,7 +3,7 @@
         <div class="p-3 pb-6 sm:w-[450px]">
             <div class="h-10 w-full flex items-center relative">
                 <div class="flex-1 font-medium text-lg text-slate-700">
-                    Nuevo producto
+                    Editar producto
                 </div>
                 <button
                     class="w-10 h-10 flex justify-center items-center rounded-full transition-colors hover:bg-gray-100"
@@ -43,9 +43,9 @@
                     <div class="mt-6">
                         <button
                             class="w-full block px-3 py-2 text-white rounded font-medium shadow-md shadow-sky-600/40 transition-colors bg-sky-600 hover:bg-sky-700 hover:shadow-sky-700/40"
-                            @click="saveProduct"
+                            @click="editProduct"
                         >
-                            Registrar producto
+                            Editar producto
                         </button>
                     </div>
                 </div>
@@ -60,12 +60,15 @@ import { useMutation } from "@vue/apollo-composable";
 import { XIcon } from "@heroicons/vue/outline";
 import CModalScaffold from "./CModalScaffold.vue";
 
-import getProducts from "@/graphql/querys/getProducts";
-import createProduct from "@/graphql/mutations/createProduct";
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import updateProduct from "@/graphql/mutations/updateProduct";
 
-defineProps({
+const props = defineProps({
     showModal: Boolean,
+    product: {
+        type: Object,
+        required: true,
+    },
 });
 
 const emit = defineEmits(["closeModal"]);
@@ -75,32 +78,26 @@ const productName = ref("");
 const productPrice = ref("");
 const productStock = ref("");
 
-const { mutate, onDone } = useMutation(createProduct);
+watch(
+    () => props.product,
+    () => {
+        const { name, price, stock } = props.product;
+        productName.value = name;
+        productPrice.value = price;
+        productStock.value = stock;
+    }
+);
 
-const saveProduct = () => {
+const { mutate, onDone } = useMutation(updateProduct);
+
+const editProduct = () => {
     const product = {
         name: productName.value,
         price: parseFloat(productPrice.value),
         stock: parseInt(productStock.value),
     };
 
-    mutate(
-        { product },
-        {
-            update: (cache, { data: { createProduct } }) => {
-                const { product } = createProduct;
-
-                const data = cache.readQuery({ query: getProducts });
-
-                const products = [product, ...data.getProducts.products];
-
-                cache.writeQuery({
-                    query: getProducts,
-                    data: { getProducts: { ...data.getProducts, products } },
-                });
-            },
-        }
-    );
+    mutate({ productId: props.product.id, product });
 };
 
 onDone(() => {

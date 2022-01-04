@@ -63,11 +63,21 @@
                                             >
                                                 <button
                                                     class="text-white rounded px-2 py-1 bg-sky-600 hover:bg-sky-700"
+                                                    @click="
+                                                        openModalEditarProducto(
+                                                            product
+                                                        )
+                                                    "
                                                 >
                                                     Editar
                                                 </button>
                                                 <button
                                                     class="text-white rounded px-2 py-1 bg-red-600 hover:bg-red-700"
+                                                    @click="
+                                                        openModalEliminarProducto(
+                                                            product
+                                                        )
+                                                    "
                                                 >
                                                     Eliminar
                                                 </button>
@@ -84,7 +94,17 @@
     </div>
     <CModelNuevoProducto
         :show-modal="showModalNuevoProducto"
-        @close-modal="closeModal"
+        @close-modal="closeModalNuevoProducto"
+    />
+    <CModelEditarProducto
+        :product="productSelected"
+        :show-modal="showModalEditarProducto"
+        @close-modal="closeModalEditarProducto"
+    />
+    <CModalEliminarProducto
+        :product="productSelected"
+        :show-modal="showModalEliminarProducto"
+        @close-modal="closeModalEliminarProducto"
     />
 </template>
 
@@ -101,16 +121,32 @@ import { ref } from "vue";
 import { useQuery, useResult } from "@vue/apollo-composable";
 
 import getProducts from "@/graphql/querys/getProducts";
+import CModalEliminarProducto from "@/components/CModal/CModalEliminarProducto.vue";
+import CModelEditarProducto from "@/components/CModal/CModelEditarProducto.vue";
 
 const showModalNuevoProducto = ref(false);
+const openModalNuevoProducto = () => (showModalNuevoProducto.value = true);
+const closeModalNuevoProducto = () => (showModalNuevoProducto.value = false);
 
-const openModalNuevoProducto = () => {
-    showModalNuevoProducto.value = true;
+const showModalEditarProducto = ref(false);
+const openModalEditarProducto = (product) => {
+    showModalEditarProducto.value = true;
+    productSelected.value = product;
+};
+const closeModalEditarProducto = () => {
+    showModalEditarProducto.value = false;
+    productSelected.value = {};
 };
 
-const closeModal = () => {
-    showModalNuevoProducto.value = false;
+const showModalEliminarProducto = ref(false);
+const openModalEliminarProducto = (product) => {
+    showModalEliminarProducto.value = true;
+    productSelected.value = product;
 };
+const closeModalEliminarProducto = () =>
+    (showModalEliminarProducto.value = false);
+
+const productSelected = ref({});
 
 const { result, error, loading } = useQuery(getProducts, null, {
     fetchPolicy: "cache-and-network",
