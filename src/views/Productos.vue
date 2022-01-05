@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="max-w-[900px] mx-auto mt-4">
-            <div v-if="loading">Cargando datos...</div>
+            <div v-if="networkStatus === 1 && !products">Cargando datos...</div>
             <div v-else-if="error">Error: {{ error.message }}</div>
             <div v-else-if="products" class="flex flex-col">
                 <div class="overflow-x-auto">
@@ -148,8 +148,9 @@ const {
     closeModalEliminarProducto,
 } = useModalNuevoProducto();
 
-const { result, error, loading } = useQuery(getProducts, null, {
+const { result, error, networkStatus } = useQuery(getProducts, null, {
     fetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
 });
 const products = useResult(result, null, (data) => data.getProducts.products);
 </script>
