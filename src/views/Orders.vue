@@ -1,5 +1,5 @@
 <template>
-    <div class="px-3 mt-10">
+    <div class="px-3 mt-10 mb-10">
         <FormNuevoPedido
             :open-form="isOpenFormNuevoPedido"
             @close-form="isOpenFormNuevoPedido = false"
@@ -155,7 +155,6 @@ import { useQuery, useResult } from "@vue/apollo-composable";
 import getOrders from "@/graphql/querys/getOrders";
 import useParseOrderStatus from "@/composables/useParseOrderStatus";
 import useActionsOrder from "@/composables/useActionsOrder";
-// import useActionsOrder from "@/composables/useActionsOrder";
 
 const isOpenFormNuevoPedido = ref(false);
 

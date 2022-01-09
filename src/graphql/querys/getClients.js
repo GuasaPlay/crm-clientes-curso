@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 
 export default gql`
-    query getClients {
-        getClients {
+    query getClients($search: String) {
+        getClients(search: $search) {
             code
             message
             success

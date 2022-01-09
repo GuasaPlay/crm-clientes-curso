@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 
 export default gql`
-    query Query {
-        getProducts {
+    query getProducts($search: String) {
+        getProducts(search: $search) {
             code
             message
             products {
